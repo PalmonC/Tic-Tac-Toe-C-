@@ -1,31 +1,104 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.2.32630.192
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tic Tac Toe", "Tic Tac Toe\Tic Tac Toe.vcxproj", "{FCE970D9-8F11-4867-9EDA-A93F528B78B6}"
-EndProject
-Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
-		Release|x64 = Release|x64
-		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{FCE970D9-8F11-4867-9EDA-A93F528B78B6}.Debug|x64.ActiveCfg = Debug|x64
-		{FCE970D9-8F11-4867-9EDA-A93F528B78B6}.Debug|x64.Build.0 = Debug|x64
-		{FCE970D9-8F11-4867-9EDA-A93F528B78B6}.Debug|x86.ActiveCfg = Debug|Win32
-		{FCE970D9-8F11-4867-9EDA-A93F528B78B6}.Debug|x86.Build.0 = Debug|Win32
-		{FCE970D9-8F11-4867-9EDA-A93F528B78B6}.Release|x64.ActiveCfg = Release|x64
-		{FCE970D9-8F11-4867-9EDA-A93F528B78B6}.Release|x64.Build.0 = Release|x64
-		{FCE970D9-8F11-4867-9EDA-A93F528B78B6}.Release|x86.ActiveCfg = Release|Win32
-		{FCE970D9-8F11-4867-9EDA-A93F528B78B6}.Release|x86.Build.0 = Release|Win32
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {E37D42A0-E311-4140-B373-F44D9E77F7C9}
-	EndGlobalSection
-EndGlobal
+#include <iostream>
+using namespace std;
+int column, line, turn = 0;
+char token;
+bool tie = false;
+char arr[3][3] = { {' ',' ',' '}, {' ',' ',' '}, {' ',' ',' '} };
+
+void fooboard() {
+    cout << "   " << arr[0][0] << " |  " << arr[0][1] << "  |  " << arr[0][2] << " \n";
+    cout << "-----+-----+-----\n";
+    cout << "   " << arr[1][0] << " |  " << arr[1][1] << "  |  " << arr[1][2] << " \n";
+    cout << "-----+-----+----- \n";
+    cout << "   " << arr[2][0] << " |  " << arr[2][1] << "  |  " << arr[2][2] << " \n";
+}
+
+
+string flipcoin(string n1, string n2) {
+    srand((unsigned)time(0));
+    int hot = rand() % 2;
+    if (hot == 1)
+        return n2;
+    return n1;
+}
+bool endgame() {
+    for (int i = 0; i < 3; i++) { // checking lines
+        if ((arr[i][0] == arr[i][1] && arr[i][1] == arr[i][2] && arr[i][0] != ' ')) {
+            printf("Won by Lines\n");
+            printf("%d", i);
+            return true;
+        }
+        else if ((arr[0][i] == arr[1][i] && arr[1][i] == arr[2][i]) && arr[0][i] != ' ') { // checking rows
+            printf("Won by Rows\n");
+            return true;
+        }
+    }
+
+    if (((arr[0][0] == arr[1][1] && arr[2][2] == arr[1][1]) || (arr[2][0] == arr[0][2] && arr[2][0] == arr[1][1])) && (arr[1][1] != ' '))
+    { // checking diagonal
+        printf("Won by Diagonal\n");
+        return true;
+    }
+    return false;
+}
+void foo1(void)
+{// this function will take care over placing either X/O in certain places on the board
+
+    cout << "Please Enter a column ";
+    cin >> column;
+    cout << "Please enter a line ";
+    cin >> line;
+    while (column > 2 || column < 0 || line < 0 || line > 2) {
+        cout << "Please Enter a column between 0 and 2 ";
+        cin >> column;
+        cout << "Please enter a line between 0 and 2 ";
+        cin >> line;
+    } // you have a line&column
+    while (arr[line][column] == 'X' || arr[line][column] == 'O') {
+        cout << "Spot taken, Please try differnet spot";
+        cin >> column;
+        cin >> line;
+    }
+    arr[line][column] = token;
+    token = (token == 'X') ? 'O' : 'X';
+}
+void reset() {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            arr[i][j] = ' ';
+        }
+    }
+}
+int main()
+{
+    string n, n1, n2;
+    cout << " Enter Your Name ";
+    cin >> n1;
+    cout << " Enter Your Name ";
+    cin >> n2;
+    cout << "Hello " << n1 << " And Hello " << n2 << "\n";
+    n = flipcoin(n1, n2);
+    if (n == n1) {
+        token = 'X';
+        cout << n1 << " First to play \n";
+    }
+    else {
+        token = 'O';
+        cout << n2 << " First to play \n";
+    }
+    int turn = 0;
+    for (turn = 0; turn < 9; turn++) {
+        if (endgame()) {
+            break;
+        }
+        fooboard();
+        foo1();
+        if (turn == 8) {
+            printf("A Tie\n Thanks for Playing My Game");
+            exit(0);
+        }
+    }
+    fooboard();
+    cout << "Game Over, The Loser is " << token << "\n";
+    cout << "Thanks For Playing\n";
+}
